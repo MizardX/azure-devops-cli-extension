@@ -275,7 +275,7 @@ def _get_branches_for_pull_request(organization, project, repository, source_bra
 def update_pull_request(id, title=None, description=None, auto_complete=None,  # pylint: disable=redefined-builtin
                         squash=None, delete_source_branch=None, bypass_policy=None, draft=None,
                         bypass_policy_reason=None, merge_commit_message=None, organization=None, detect=None,
-                        transition_work_items=None, status=None):
+                        transition_work_items=None, target_branch=None, status=None):
     """Update a pull request.
     :param id: ID of the pull request.
     :type id: int
@@ -304,6 +304,8 @@ def update_pull_request(id, title=None, description=None, auto_complete=None,  #
     :param transition_work_items: Transition any work items linked to the pull request into the next logical state.
                    (e.g. Active -> Resolved)
     :type transition_work_items: bool
+    :param target_branch: Name of the target branch.
+    :type target_branch: str
     :param status: Set the new state of pull request.
     :type status: str
     :rtype: :class:`GitPullRequest <v5_0.git.models.GitPullRequest>`
@@ -345,6 +347,8 @@ def update_pull_request(id, title=None, description=None, auto_complete=None,  #
             pr.auto_complete_set_by = IdentityRef(id=EMPTY_UUID)
     if draft is not None:
         pr.is_draft = draft
+    if target_branch is not None:
+        pr.target_ref_name = resolve_git_ref_heads(target_branch)
     if status is not None:
         pr.status = status
         if status == 'completed':

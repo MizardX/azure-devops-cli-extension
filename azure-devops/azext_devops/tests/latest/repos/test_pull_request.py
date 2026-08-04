@@ -319,11 +319,14 @@ class TestPullRequestMethods(AuthenticatedTests):
     def test_update_pull_request(self):
         test_pr_id = 1
         response = update_pull_request(id = test_pr_id,
-        organization = self._TEST_DEVOPS_ORGANIZATION)
+        organization = self._TEST_DEVOPS_ORGANIZATION,
+        target_branch = self._TEST_TARGET_BRANCH)
 
         #assert
         self.mock_get_PR_byId.assert_called_once_with(test_pr_id)
         self.mock_update_PR.assert_called_once()
+        update_object_from_update_call = self.mock_update_PR.call_args_list[0][1]['git_pull_request_to_update']
+        assert update_object_from_update_call.target_ref_name == resolve_git_ref_heads(self._TEST_TARGET_BRANCH)
 
     def test_complete_pull_request(self):
         test_pr_id = 1
